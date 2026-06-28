@@ -1,3 +1,4 @@
+﻿chcp 65001 > $null
 Write-Host "=== 启动博客系统 ==="
 Write-Host ""
 
@@ -5,7 +6,6 @@ $ROOT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BACKEND_DIR = Join-Path $ROOT_DIR "backend"
 $FRONTEND_DIR = Join-Path $ROOT_DIR "frontend"
 
-# 查找 Python
 $PYTHON_EXE = "python.exe"
 if (Test-Path "D:\miniconda3\python.exe") { $PYTHON_EXE = "D:\miniconda3\python.exe" }
 
@@ -23,4 +23,4 @@ Write-Host "=== 启动完成! ==="
 Write-Host "访问: http://localhost:5173"
 Write-Host "账户: admin / admin123"
 Write-Host ""
-cmd /c pause
+Read-Host "按 Enter 键退出"

@@ -1,3 +1,4 @@
+﻿chcp 65001 > $null
 Write-Host "=== 停止博客系统 ==="
 Write-Host ""
 
@@ -12,4 +13,4 @@ Write-Host "前端服务已停止"
 
 Write-Host ""
 Write-Host "=== 博客系统已停止! ==="
-cmd /c pause
+Read-Host "按 Enter 键退出"
