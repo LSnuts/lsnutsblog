@@ -118,7 +118,8 @@
                 :key="index"
                 :class="{
                   'other-month': day.otherMonth,
-                  'has-post': hasPostOnDate(day.date)
+                  'has-post': hasPostOnDate(day.date),
+                  'today': isToday(day.date)
                 }"
               >
                 {{ day.day }}
@@ -320,6 +321,12 @@ const hasPostOnDate = (dateString) => {
   })
 }
 
+const isToday = (dateString) => {
+  const today = new Date()
+  const todayStr = today.toISOString().split('T')[0]
+  return dateString === todayStr
+}
+
 // 监听路由查询参数变化
 watch(() => route.query.search, (newSearch) => {
   if (newSearch) {
@@ -359,6 +366,8 @@ onMounted(() => {
 
 .profile-card {
   text-align: center;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
 }
 
 .profile-header {
@@ -431,8 +440,9 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 20px;
   padding: 15px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
+  backdrop-filter: blur(8px);
 }
 
 .search-results-header h3 {
@@ -452,6 +462,8 @@ onMounted(() => {
 .post-card {
   cursor: pointer;
   transition: all 0.3s;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
 }
 
 .post-card:hover {
@@ -510,6 +522,8 @@ onMounted(() => {
 
 .calendar-card {
   overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
 }
 
 .calendar-header {
@@ -559,6 +573,18 @@ onMounted(() => {
 
 .calendar-days span.has-post {
   background-color: #409eff;
+  color: white;
+}
+
+.calendar-days span.today {
+  border: 2px solid #409eff;
+  font-weight: bold;
+  color: #409eff;
+}
+
+.calendar-days span.today.has-post {
+  background-color: #409eff;
+  border-color: #409eff;
   color: white;
 }
 

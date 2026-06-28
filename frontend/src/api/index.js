@@ -7,7 +7,6 @@ const api = axios.create({
   timeout: 10000
 })
 
-// 请求拦截器
 api.interceptors.request.use(
   (config) => {
     const authStore = useAuthStore()
@@ -16,24 +15,20 @@ api.interceptors.request.use(
     }
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  }
+  (error) => Promise.reject(error)
 )
 
-// 响应拦截器
 api.interceptors.response.use(
-  (response) => {
-    return response.data
-  },
+  (response) => response.data,
   (error) => {
-    const message = error.response?.data?.error || '请求失败'
+    const errData = error.response?.data || {}
+    const message = errData.error || errData.msg || '请求失败'
+    const status = error.response?.status
 
-    if (error.response?.status === 401) {
+    // 401 未授权 或 422 JWT令牌无效（subject格式错误/过期）
+    if (status === 401 || (status === 422 && errData.msg?.toLowerCase().includes('subject'))) {
       const authStore = useAuthStore()
       authStore.logout()
-
-      // 如果不在登录页，跳转到登录页
       if (window.location.pathname !== '/login') {
         window.location.href = '/login'
       }
@@ -44,7 +39,6 @@ api.interceptors.response.use(
   }
 )
 
-// 认证相关 API
 export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   register: (data) => api.post('/auth/register', data),
@@ -53,7 +47,6 @@ export const authAPI = {
   refreshToken: () => api.post('/auth/refresh')
 }
 
-// 文章相关 API
 export const postsAPI = {
   getPosts: (params) => api.get('/posts', { params }),
   getPost: (id) => api.get(`/posts/${id}`),
@@ -62,7 +55,6 @@ export const postsAPI = {
   deletePost: (id) => api.delete(`/posts/${id}`)
 }
 
-// 配置相关 API
 export const configAPI = {
   getAllConfig: () => api.get('/config'),
   getConfig: (key) => api.get(`/config/${key}`),
@@ -71,26 +63,17 @@ export const configAPI = {
   deleteConfig: (key) => api.delete(`/config/${key}`)
 }
 
-// 文件上传 API
+const createUploadRequest = (url) => (file) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  return api.post(url, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}
+
 export const uploadAPI = {
-  uploadImage: (file) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    return api.post('/upload/image', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-  },
-  uploadAvatar: (file) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    return api.post('/upload/avatar', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-  }
+  uploadImage: createUploadRequest('/upload/image'),
+  uploadAvatar: createUploadRequest('/upload/avatar')
 }
 
 export default api

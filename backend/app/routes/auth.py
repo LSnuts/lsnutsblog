@@ -29,8 +29,8 @@ def register():
     db.session.commit()
 
     # 创建访问令牌
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
 
     return jsonify({
         'message': '注册成功',
@@ -56,8 +56,8 @@ def login():
         return jsonify({'error': '用户名或密码错误'}), 401
 
     # 创建访问令牌
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
 
     return jsonify({
         'message': '登录成功',
@@ -71,7 +71,7 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     current_user_id = get_jwt_identity()
-    access_token = create_access_token(identity=current_user_id)
+    access_token = create_access_token(identity=str(current_user_id))
 
     return jsonify({
         'access_token': access_token

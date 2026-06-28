@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from config import Config
+import os
 
 db = SQLAlchemy()
 jwt = JWTManager()
@@ -30,6 +31,15 @@ def create_app(config_class=Config):
     app.register_blueprint(posts_bp, url_prefix='/api/posts')
     app.register_blueprint(config_bp, url_prefix='/api/config')
     app.register_blueprint(upload_bp, url_prefix='/api/upload')
+
+    # 提供上传文件的静态访问
+    upload_folder = app.config['UPLOAD_FOLDER']
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+
+    @app.route('/uploads/<path:filename>')
+    def serve_upload(filename):
+        return send_from_directory(upload_folder, filename)
 
     # 创建数据库表
     with app.app_context():

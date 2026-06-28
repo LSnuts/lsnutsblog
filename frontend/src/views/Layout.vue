@@ -72,7 +72,8 @@ const backgroundStyle = computed(() => {
     backgroundImage: `url(${bg})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundAttachment: 'fixed'
+    backgroundAttachment: 'fixed',
+    backgroundRepeat: 'no-repeat'
   } : {}
 })
 
@@ -89,7 +90,28 @@ const handleSearch = () => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
+  background-color: #f0f2f5;
+  position: relative;
+}
+
+/* 背景半透明遮罩层 */
+.layout-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.navbar,
+.main-content,
+.footer {
+  position: relative;
+  z-index: 1;
 }
 
 /* 导航栏 */

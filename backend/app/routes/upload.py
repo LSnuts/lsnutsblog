@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
@@ -14,6 +15,39 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
+def save_uploaded_file(file, prefix=''):
+    """保存上传的文件"""
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+
+    filename = secure_filename(file.filename)
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+    name, ext = os.path.splitext(filename)
+    filename = f"{prefix}{name}_{timestamp}{ext}"
+
+    file_path = os.path.join(upload_folder, filename)
+    file.save(file_path)
+
+    return f'/uploads/{filename}'
+
+
+def validate_upload_request():
+    """验证上传请求"""
+    if 'file' not in request.files:
+        return {'error': '没有上传文件'}, 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return {'error': '没有选择文件'}, 400
+
+    if not allowed_file(file.filename):
+        return {'error': '不允许的文件类型'}, 400
+
+    return {'file': file}, 200
+
+
 @upload_bp.route('/image', methods=['POST'])
 @jwt_required()
 def upload_image():
@@ -24,42 +58,15 @@ def upload_image():
     if not user or not user.is_admin:
         return jsonify({'error': '无权限'}), 403
 
-    # 检查是否有文件
-    if 'file' not in request.files:
-        return jsonify({'error': '没有上传文件'}), 400
+    result, status = validate_upload_request()
+    if status != 200:
+        return jsonify(result), status
 
-    file = request.files['file']
+    file_url = save_uploaded_file(result['file'])
 
-    # 检查文件名
-    if file.filename == '':
-        return jsonify({'error': '没有选择文件'}), 400
-
-    # 检查文件类型
-    if not allowed_file(file.filename):
-        return jsonify({'error': '不允许的文件类型'}), 400
-
-    # 确保上传目录存在
-    upload_folder = current_app.config['UPLOAD_FOLDER']
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
-
-    # 生成安全的文件名
-    filename = secure_filename(file.filename)
-    # 添加时间戳避免重名
-    from datetime import datetime
-    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    name, ext = os.path.splitext(filename)
-    filename = f"{name}_{timestamp}{ext}"
-
-    # 保存文件
-    file_path = os.path.join(upload_folder, filename)
-    file.save(file_path)
-
-    # 返回文件 URL
     return jsonify({
         'message': '文件上传成功',
-        'filename': filename,
-        'url': f'/uploads/{filename}'
+        'url': file_url
     }), 200
 
 
@@ -73,41 +80,13 @@ def upload_avatar():
     if not user:
         return jsonify({'error': '用户不存在'}), 404
 
-    # 检查是否有文件
-    if 'file' not in request.files:
-        return jsonify({'error': '没有上传文件'}), 400
+    result, status = validate_upload_request()
+    if status != 200:
+        return jsonify(result), status
 
-    file = request.files['file']
-
-    # 检查文件名
-    if file.filename == '':
-        return jsonify({'error': '没有选择文件'}), 400
-
-    # 检查文件类型
-    if not allowed_file(file.filename):
-        return jsonify({'error': '不允许的文件类型'}), 400
-
-    # 确保上传目录存在
-    upload_folder = current_app.config['UPLOAD_FOLDER']
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
-
-    # 生成安全的文件名
-    filename = secure_filename(file.filename)
-    # 使用用户 ID 作为文件名的一部分
-    from datetime import datetime
-    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    name, ext = os.path.splitext(filename)
-    filename = f"avatar_{current_user_id}_{timestamp}{ext}"
-
-    # 保存文件
-    file_path = os.path.join(upload_folder, filename)
-    file.save(file_path)
-
-    # 返回文件 URL
-    avatar_url = f'/uploads/{filename}'
+    file_url = save_uploaded_file(result['file'], f'avatar_{current_user_id}_')
 
     return jsonify({
         'message': '头像上传成功',
-        'url': avatar_url
+        'url': file_url
     }), 200

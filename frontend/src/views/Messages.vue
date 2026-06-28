@@ -234,6 +234,11 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+.messages-card {
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+}
+
 .card-header {
   text-align: center;
 }

@@ -122,6 +122,8 @@ onMounted(() => {
 
 .about-card {
   margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
 }
 
 .card-header {
