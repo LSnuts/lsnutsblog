@@ -76,4 +76,20 @@ export const uploadAPI = {
   uploadAvatar: createUploadRequest('/upload/avatar')
 }
 
+export const messagesAPI = {
+  getMessages: (params) => api.get('/messages', { params }),
+  getMessage: (id) => api.get(`/messages/${id}`),
+  createMessage: (data) => api.post('/messages', data),
+  updateMessage: (id, data) => api.put(`/messages/${id}`, data),
+  deleteMessage: (id) => api.delete(`/messages/${id}`)
+}
+
+export const pagesAPI = {
+  getPages: (params) => api.get('/pages', { params }),
+  getPage: (slug) => api.get(`/pages/${slug}`),
+  createPage: (data) => api.post('/pages', data),
+  updatePage: (id, data) => api.put(`/pages/${id}`, data),
+  deletePage: (id) => api.delete(`/pages/${id}`)
+}
+
 export default api

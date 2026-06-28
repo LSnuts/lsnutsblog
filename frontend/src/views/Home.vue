@@ -168,7 +168,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useConfigStore } from '@/stores/config'
-import { postsAPI } from '@/api'
+import { postsAPI, messagesAPI } from '@/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -260,13 +260,17 @@ const fetchPosts = async () => {
       params.search = searchQuery.value
     }
 
-    const response = await postsAPI.getPosts(params)
-    posts.value = response.posts
-    pagination.total = response.total
+    const [postsRes, msgRes] = await Promise.all([
+      postsAPI.getPosts(params),
+      messagesAPI.getMessages({ page: 1, per_page: 1, approved: true })
+    ])
+    posts.value = postsRes.posts
+    pagination.total = postsRes.total
 
     // 更新统计数据
-    stats.posts = response.total
-    stats.views = response.posts.reduce((sum, p) => sum + p.views, 0)
+    stats.posts = postsRes.total
+    stats.views = postsRes.posts.reduce((sum, p) => sum + p.views, 0)
+    stats.messages = msgRes.total
 
     // 获取最新文章
     if (!searchQuery.value) {
@@ -366,8 +370,9 @@ onMounted(() => {
 
 .profile-card {
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
+  transition: background-color 0.3s;
 }
 
 .profile-header {
@@ -377,10 +382,11 @@ onMounted(() => {
 .profile-name {
   margin: 15px 0 5px;
   font-size: 20px;
+  color: var(--text-primary);
 }
 
 .profile-signature {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   margin: 0;
 }
@@ -389,9 +395,10 @@ onMounted(() => {
   display: flex;
   justify-content: space-around;
   padding: 20px 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   margin: 20px 0;
+  transition: border-color 0.3s;
 }
 
 .stat-item {
@@ -407,7 +414,7 @@ onMounted(() => {
 
 .stat-label {
   font-size: 12px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .profile-links {
@@ -420,9 +427,10 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #666;
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 14px;
+  transition: color 0.3s;
 }
 
 .profile-links a:hover {
@@ -440,9 +448,10 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 20px;
   padding: 15px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--bg-card);
   border-radius: 8px;
   backdrop-filter: blur(8px);
+  transition: background-color 0.3s;
 }
 
 .search-results-header h3 {
@@ -462,13 +471,13 @@ onMounted(() => {
 .post-card {
   cursor: pointer;
   transition: all 0.3s;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
 }
 
 .post-card:hover {
   transform: translateX(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px var(--shadow-color);
 }
 
 .post-header {
@@ -481,11 +490,11 @@ onMounted(() => {
 .post-title {
   margin: 0;
   font-size: 18px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .post-summary {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 15px;
@@ -494,7 +503,7 @@ onMounted(() => {
 .post-meta {
   display: flex;
   gap: 20px;
-  color: #999;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -510,7 +519,6 @@ onMounted(() => {
   justify-content: center;
 }
 
-/* 右侧边栏 */
 .sidebar-right {
   position: sticky;
   top: 90px;
@@ -522,8 +530,9 @@ onMounted(() => {
 
 .calendar-card {
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
+  transition: background-color 0.3s;
 }
 
 .calendar-header {
@@ -531,6 +540,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   font-weight: bold;
+  color: var(--text-primary);
 }
 
 .calendar-nav {
@@ -547,7 +557,7 @@ onMounted(() => {
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
   font-size: 12px;
-  color: #999;
+  color: var(--text-muted);
   margin-bottom: 10px;
 }
 
@@ -568,7 +578,8 @@ onMounted(() => {
 }
 
 .calendar-days span.other-month {
-  color: #ccc;
+  color: var(--text-muted);
+  opacity: 0.4;
 }
 
 .calendar-days span.has-post {
@@ -613,13 +624,13 @@ onMounted(() => {
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   transition: all 0.3s;
   border-left: 3px solid transparent;
 }
 
 .recent-post-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--border-color);
   border-left-color: #409eff;
   color: #409eff;
   padding-left: 12px;

@@ -26,11 +26,15 @@ def create_app(config_class=Config):
     from app.routes.posts import posts_bp
     from app.routes.config import config_bp
     from app.routes.upload import upload_bp
+    from app.routes.messages import messages_bp
+    from app.routes.pages import pages_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(posts_bp, url_prefix='/api/posts')
     app.register_blueprint(config_bp, url_prefix='/api/config')
     app.register_blueprint(upload_bp, url_prefix='/api/upload')
+    app.register_blueprint(messages_bp, url_prefix='/api/messages')
+    app.register_blueprint(pages_bp, url_prefix='/api/pages')
 
     # 提供上传文件的静态访问
     upload_folder = app.config['UPLOAD_FOLDER']

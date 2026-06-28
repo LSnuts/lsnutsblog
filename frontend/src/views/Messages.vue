@@ -92,30 +92,9 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { messagesAPI } from '@/api'
 
-const messages = ref([
-  {
-    id: 1,
-    author: '游客001',
-    email: 'visitor@example.com',
-    content: '这个博客真不错！',
-    created_at: new Date().toISOString()
-  },
-  {
-    id: 2,
-    author: '开发者小王',
-    email: 'wang@example.com',
-    content: '文章写得很好，学到了很多！',
-    created_at: new Date(Date.now() - 86400000).toISOString()
-  },
-  {
-    id: 3,
-    author: '路过的小伙伴',
-    content: '支持下，期待更多精彩内容！',
-    created_at: new Date(Date.now() - 172800000).toISOString()
-  }
-])
-
+const messages = ref([])
 const loading = ref(false)
 const submitting = ref(false)
 const formRef = ref(null)
@@ -142,13 +121,19 @@ const pagination = reactive({
   total: 3
 })
 
-const fetchMessages = () => {
-  // 实际项目中这里会从 API 获取数据
-  // 目前使用静态数据演示
+const fetchMessages = async () => {
   loading.value = true
-  setTimeout(() => {
+  try {
+    const response = await messagesAPI.getMessages({
+      page: pagination.currentPage,
+      per_page: pagination.perPage,
+      approved: true
+    })
+    messages.value = response.messages
+    pagination.total = response.total
+  } finally {
     loading.value = false
-  }, 500)
+  }
 }
 
 const handleSubmit = async () => {
@@ -158,22 +143,12 @@ const handleSubmit = async () => {
     if (valid) {
       submitting.value = true
       try {
-        // 模拟提交
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // 添加新留言到列表
-        const newMessage = {
-          id: Date.now(),
+        await messagesAPI.createMessage({
           author: form.author,
           email: form.email,
-          content: form.content,
-          created_at: new Date().toISOString()
-        }
-
-        messages.value.unshift(newMessage)
-        pagination.total++
-
-        ElMessage.success('留言提交成功！')
+          content: form.content
+        })
+        ElMessage.success('留言提交成功，等待审核！')
         resetForm()
       } finally {
         submitting.value = false
@@ -235,8 +210,9 @@ onMounted(() => {
 }
 
 .messages-card {
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
+  transition: background-color 0.3s;
 }
 
 .card-header {
@@ -246,7 +222,7 @@ onMounted(() => {
 .card-header h2 {
   margin: 0;
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .subtitle {

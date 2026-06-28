@@ -122,8 +122,9 @@ onMounted(() => {
 
 .about-card {
   margin-bottom: 20px;
-  background-color: rgba(255, 255, 255, 0.92);
+  background-color: var(--bg-card);
   backdrop-filter: blur(8px);
+  transition: background-color 0.3s;
 }
 
 .card-header {
@@ -133,7 +134,7 @@ onMounted(() => {
 .card-header h2 {
   margin: 0;
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .about-body {
@@ -143,18 +144,19 @@ onMounted(() => {
 .profile-section {
   text-align: center;
   padding: 40px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 40px;
+  transition: border-color 0.3s;
 }
 
 .name {
   margin: 20px 0 10px;
   font-size: 32px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .signature {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 16px;
   margin: 0;
 }
@@ -168,7 +170,7 @@ onMounted(() => {
 
 h3 {
   font-size: 20px;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid #409eff;
@@ -183,17 +185,17 @@ h3 {
 
 .info-item {
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: var(--border-color);
   border-radius: 4px;
 }
 
 .label {
   font-weight: bold;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .value {
-  color: #333;
+  color: var(--text-primary);
 }
 
 .value a {

@@ -50,6 +50,17 @@
           </div>
         </el-card>
       </el-col>
+      <el-col :xs="24" :sm="12" :md="6">
+        <el-card shadow="hover" class="stat-card">
+          <div class="stat-icon" style="background-color: #9B59B6">
+            <el-icon :size="30"><ChatDotSquare /></el-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{ stats.messages }}</div>
+            <div class="stat-label">留言</div>
+          </div>
+        </el-card>
+      </el-col>
     </el-row>
 
     <el-row :gutter="20">
@@ -95,26 +106,31 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { postsAPI } from '@/api'
+import { postsAPI, messagesAPI } from '@/api'
 
 const stats = reactive({
   posts: 0,
   published: 0,
   drafts: 0,
-  views: 0
+  views: 0,
+  messages: 0
 })
 
 const recentPosts = ref([])
 
 const fetchStats = async () => {
   try {
-    const response = await postsAPI.getPosts({ page: 1, per_page: 100, published: false })
-    const posts = response.posts
+    const [postsRes, msgRes] = await Promise.all([
+      postsAPI.getPosts({ page: 1, per_page: 100, published: false }),
+      messagesAPI.getMessages({ page: 1, per_page: 1 })
+    ])
 
-    stats.posts = response.total
+    const posts = postsRes.posts
+    stats.posts = postsRes.total
     stats.published = posts.filter(p => p.is_published).length
     stats.drafts = posts.filter(p => !p.is_published).length
     stats.views = posts.reduce((sum, p) => sum + p.views, 0)
+    stats.messages = msgRes.total
 
     recentPosts.value = posts.slice(0, 5)
   } catch (error) {

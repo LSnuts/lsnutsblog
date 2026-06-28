@@ -19,6 +19,18 @@
           <el-icon><Document /></el-icon>
           <span>文章管理</span>
         </el-menu-item>
+        <el-menu-item index="/admin/messages">
+          <el-icon><ChatDotSquare /></el-icon>
+          <span>留言管理</span>
+        </el-menu-item>
+        <el-menu-item index="/admin/pages">
+          <el-icon><Notebook /></el-icon>
+          <span>页面管理</span>
+        </el-menu-item>
+        <el-menu-item index="/admin/menus">
+          <el-icon><Menu /></el-icon>
+          <span>菜单管理</span>
+        </el-menu-item>
         <el-menu-item index="/admin/config">
           <el-icon><Setting /></el-icon>
           <span>博客配置</span>
@@ -37,6 +49,14 @@
           </router-link>
         </div>
         <div class="header-right">
+          <el-tooltip :content="themeStore.isDark ? '切换日间模式' : '切换夜间模式'" placement="bottom">
+            <el-button
+              :icon="themeStore.isDark ? 'Sunny' : 'Moon'"
+              circle
+              @click="themeStore.toggle"
+              class="theme-toggle"
+            />
+          </el-tooltip>
           <el-dropdown @command="handleCommand">
             <span class="user-dropdown">
               <el-icon><User /></el-icon>
@@ -85,11 +105,13 @@
 import { ref, computed, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore } from '@/stores/theme'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const themeStore = useThemeStore()
 
 const activeMenu = computed(() => route.path)
 
@@ -212,6 +234,7 @@ const handleChangePassword = async () => {
 .header-right {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .user-dropdown {
@@ -223,5 +246,55 @@ const handleChangePassword = async () => {
 
 .main {
   background-color: #f0f2f5;
+}
+</style>
+
+<style>
+/* 管理后台暗色模式 */
+html.dark-mode .admin-layout .sidebar {
+  background-color: #1e1e38 !important;
+}
+
+html.dark-mode .admin-layout .header {
+  background-color: #1a1a2e !important;
+  border-bottom-color: #3a3a5c !important;
+  color: #e0e0e0;
+}
+
+html.dark-mode .admin-layout .main {
+  background-color: #16162a !important;
+}
+
+html.dark-mode .admin-layout .user-dropdown {
+  color: #e0e0e0;
+}
+
+html.dark-mode .admin-layout .el-menu:not(.el-menu--horizontal) {
+  background-color: #1e1e38 !important;
+}
+
+html.dark-mode .admin-layout .el-menu-item {
+  color: #bfcbd9 !important;
+}
+
+html.dark-mode .admin-layout .el-menu-item.is-active {
+  color: #409eff !important;
+  background-color: rgba(64, 158, 255, 0.1) !important;
+}
+
+html.dark-mode .admin-layout .theme-toggle {
+  color: #e0e0e0;
+}
+
+html.dark-mode .admin-layout .theme-toggle:hover {
+  color: #409eff;
+}
+
+html.dark-mode .admin-layout .el-dialog {
+  background-color: #1a1a2e !important;
+}
+
+html.dark-mode .admin-layout .el-dialog__title {
+  color: #e0e0e0 !important;
 }
 </style>

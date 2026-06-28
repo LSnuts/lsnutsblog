@@ -30,6 +30,12 @@ const routes = [
         name: 'Messages',
         component: () => import('@/views/Messages.vue'),
         meta: { title: '留言墙' }
+      },
+      {
+        path: 'page/:slug',
+        name: 'CustomPage',
+        component: () => import('@/views/CustomPage.vue'),
+        meta: { title: '自定义页面' }
       }
     ]
   },
@@ -74,6 +80,24 @@ const routes = [
         name: 'AdminConfig',
         component: () => import('@/views/admin/Config.vue'),
         meta: { title: '博客配置' }
+      },
+      {
+        path: 'messages',
+        name: 'AdminMessages',
+        component: () => import('@/views/admin/Messages.vue'),
+        meta: { title: '留言管理' }
+      },
+      {
+        path: 'pages',
+        name: 'AdminPages',
+        component: () => import('@/views/admin/Pages.vue'),
+        meta: { title: '页面管理' }
+      },
+      {
+        path: 'menus',
+        name: 'AdminMenus',
+        component: () => import('@/views/admin/Menus.vue'),
+        meta: { title: '菜单管理' }
       }
     ]
   }
