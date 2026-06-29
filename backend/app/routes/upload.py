@@ -18,19 +18,23 @@ def allowed_file(filename):
 def save_uploaded_file(file, prefix=''):
     """保存上传的文件"""
     upload_folder = current_app.config['UPLOAD_FOLDER']
-    api_base_url = current_app.config['API_BASE_URL']
     if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
+        os.makedirs(upload_folder, exist_ok=True)
 
     filename = secure_filename(file.filename)
+    if not filename:
+        filename = f'{prefix}image_{datetime.now().strftime("%Y%m%d%H%M%S")}.jpg'
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     name, ext = os.path.splitext(filename)
     filename = f"{prefix}{name}_{timestamp}{ext}"
 
     file_path = os.path.join(upload_folder, filename)
-    file.save(file_path)
-
-    return f'{api_base_url}/uploads/{filename}'
+    try:
+        file.save(file_path)
+        return f'/uploads/{filename}'
+    except Exception as e:
+        current_app.logger.error(f'File save error: {e}')
+        raise
 
 
 def validate_upload_request():

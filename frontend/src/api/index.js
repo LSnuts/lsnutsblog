@@ -96,6 +96,9 @@ export const uploadsBaseUrl = import.meta.env.VITE_UPLOADS_BASE_URL
 
 export const resolveUploadUrl = (url) => {
   if (!url) return ''
+  if (url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1')) {
+    return url.replace(/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, '')
+  }
   if (url.startsWith('http://') || url.startsWith('https://')) return url
   return `${uploadsBaseUrl}${url.startsWith('/') ? '' : '/'}${url}`
 }

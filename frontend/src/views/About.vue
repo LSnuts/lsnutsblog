@@ -10,7 +10,7 @@
 
         <div class="about-body">
           <div class="profile-section">
-            <el-avatar :size="150" :src="configStore.getConfig('avatar') || undefined">
+            <el-avatar :size="150" :src="resolveUploadUrl(configStore.getConfig('avatar')) || undefined">
               <el-icon :size="80"><User /></el-icon>
             </el-avatar>
             <h1 class="name">{{ configStore.getConfig('author_name', '博主') }}</h1>
@@ -91,6 +91,7 @@
 import { computed, onMounted } from 'vue'
 import { useConfigStore } from '@/stores/config'
 import { marked } from 'marked'
+import { resolveUploadUrl } from '@/api'
 
 const configStore = useConfigStore()
 

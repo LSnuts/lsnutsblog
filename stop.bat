@@ -16,10 +16,9 @@ taskkill /FI "WINDOWTITLE eq Blog-Frontend" /F 2>nul
 echo Frontend service stopped
 
 echo.
-echo [3/3] Cleaning up processes...
-taskkill /FI "WINDOWTITLE eq Blog-Backend" /F 2>nul
-taskkill /FI "WINDOWTITLE eq Blog-Frontend" /F 2>nul
-echo Processes cleaned up
+echo [3/3] Stopping Cloudflare Tunnel...
+taskkill /FI "WINDOWTITLE eq Cloudflare-Tunnel" /F 2>nul
+echo Cloudflare Tunnel stopped
 
 echo.
 echo ================================

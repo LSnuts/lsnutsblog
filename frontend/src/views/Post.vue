@@ -27,7 +27,7 @@
       </header>
 
       <div v-if="post.cover_image" class="post-cover">
-        <img :src="post.cover_image" :alt="post.title" />
+        <img :src="resolveUploadUrl(post.cover_image)" :alt="post.title" />
       </div>
 
       <div class="post-content" v-html="renderedContent"></div>
@@ -40,7 +40,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { postsAPI } from '@/api'
+import { postsAPI, resolveUploadUrl } from '@/api'
 import { marked } from 'marked'
 import 'highlight.js/styles/github.css'
 
@@ -64,7 +64,12 @@ const renderedContent = computed(() => {
     gfm: true
   })
 
-  return marked(post.value.content)
+  let content = post.value.content
+  content = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+    return `![${alt}](${resolveUploadUrl(src)})`
+  })
+
+  return marked(content)
 })
 
 const fetchPost = async () => {

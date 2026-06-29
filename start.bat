@@ -24,13 +24,20 @@ set FRONTEND_DIR=%~dp0frontend
 start "Blog-Frontend" cmd /k "cd /d %FRONTEND_DIR% && npm run dev"
 timeout /t 3 /nobreak >nul
 
+echo [3/3] Starting Cloudflare Tunnel...
+set CLOUDFLARED_EXE=cloudflared.exe
+if exist "C:\Users\ASUS\Downloads\cloudflared.exe" set CLOUDFLARED_EXE=C:\Users\ASUS\Downloads\cloudflared.exe
+if exist "C:\cloudflared\cloudflared.exe" set CLOUDFLARED_EXE=C:\cloudflared\cloudflared.exe
+start "Cloudflare-Tunnel" cmd /k "%CLOUDFLARED_EXE% tunnel run lsblog-tunnel"
+
 echo.
 echo ================================
 echo     START COMPLETE!
 echo ================================
-echo Access: http://localhost:5173
-echo Admin: http://localhost:5173/admin
-echo Account: admin / admin123
+echo Local:    http://localhost:5173
+echo Remote:   https://lsblog.118201820.xyz
+echo Admin:    http://localhost:5173/admin
+echo Account:  admin / admin123
 echo ================================
 echo.
 pause

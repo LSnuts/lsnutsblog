@@ -59,7 +59,7 @@
         <el-form-item label="背景图片">
           <div class="bg-upload-area">
             <div class="bg-preview" v-if="form.background">
-              <div class="bg-preview-img" :style="{backgroundImage: 'url('+form.background+')'}"></div>
+              <div class="bg-preview-img" :style="{backgroundImage: 'url('+resolveUploadUrl(form.background)+')'}"></div>
               <div class="bg-actions">
                 <el-button type="primary" @click="openCropDialog('background')">裁剪</el-button>
                 <el-button type="danger" @click="form.background = ''">移除</el-button>
@@ -83,7 +83,7 @@
         <el-form-item label="首页横幅图">
           <div class="bg-upload-area">
             <div class="bg-preview" v-if="form.hero_banner">
-              <div class="bg-preview-img" :style="{backgroundImage: 'url('+form.hero_banner+')'}"></div>
+              <div class="bg-preview-img" :style="{backgroundImage: 'url('+resolveUploadUrl(form.hero_banner)+')'}"></div>
               <div class="bg-actions">
                 <el-button type="primary" @click="openCropDialog('hero_banner')">裁剪</el-button>
                 <el-button type="danger" @click="form.hero_banner = ''">移除</el-button>
@@ -311,7 +311,7 @@ const openCropDialog = (target) => {
     ElMessage.error('无法加载图片进行裁剪')
     cropLoading.value = false
   }
-  img.src = url
+  img.src = resolveUploadUrl(url)
 }
 
 const initCropper = async () => {
@@ -407,7 +407,9 @@ const saveCropped = async () => {
     // 使用 FormData 上传
     const fd = new FormData()
     fd.append('file', blob, 'background.jpg')
-    const res = await fetch('/api/upload/image', {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+    const uploadUrl = `${apiBaseUrl}/upload/image`
+    const res = await fetch(uploadUrl, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${authStore.token}` },
       body: fd
