@@ -67,6 +67,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
 import { useThemeStore } from '@/stores/theme'
+import { resolveUploadUrl } from '@/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -100,7 +101,7 @@ const defaultMenu = [
 ]
 
 const backgroundStyle = computed(() => {
-  const bg = configStore.getConfig('background')
+  const bg = resolveUploadUrl(configStore.getConfig('background'))
   return bg ? {
     backgroundImage: `url(${bg})`,
     backgroundSize: 'cover',
@@ -112,8 +113,8 @@ const backgroundStyle = computed(() => {
 
 const heroStyle = computed(() => {
   // 优先使用独立横幅图片，没有则使用背景图片
-  const hero = configStore.getConfig('hero_banner')
-  const bg = hero || configStore.getConfig('background')
+  const hero = resolveUploadUrl(configStore.getConfig('hero_banner'))
+  const bg = hero || resolveUploadUrl(configStore.getConfig('background'))
   return bg ? {
     backgroundImage: `url(${bg})`,
     backgroundSize: 'cover',

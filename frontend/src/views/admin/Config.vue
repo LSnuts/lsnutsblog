@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="config-page">
     <h2 class="page-title">博客配置</h2>
 
@@ -41,7 +41,7 @@
 
         <el-form-item label="头像">
           <div class="avatar-upload">
-            <el-avatar :size="100" :src="form.avatar || undefined">
+            <el-avatar :size="100" :src="resolveUploadUrl(form.avatar) || undefined">
               <el-icon :size="40"><User /></el-icon>
             </el-avatar>
             <el-upload
@@ -204,7 +204,7 @@ import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useConfigStore } from '@/stores/config'
-import { uploadAPI } from '@/api'
+import { uploadAPI, resolveUploadUrl } from '@/api'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -233,8 +233,9 @@ const form = reactive({
 })
 
 const previewStyle = computed(() => {
-  return form.background ? {
-    backgroundImage: `url(${form.background})`,
+  const bg = resolveUploadUrl(form.background)
+  return bg ? {
+    backgroundImage: `url(${bg})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   } : {

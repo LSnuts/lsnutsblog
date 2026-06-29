@@ -21,7 +21,15 @@ class Config:
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
     # CORS 配置
-    CORS_ORIGINS = ['http://localhost:5173', 'http://localhost:3000']
+    CORS_ORIGINS = [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'https://lsblog.118201820.xyz',
+        'http://lsblog.118201820.xyz'
+    ]
+
+    # API 域名（用于拼接 uploads 完整路径）
+    API_BASE_URL = os.environ.get('API_BASE_URL') or 'http://localhost:5000'
 
     # 分页配置
     POSTS_PER_PAGE = 10

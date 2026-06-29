@@ -18,6 +18,7 @@ def allowed_file(filename):
 def save_uploaded_file(file, prefix=''):
     """保存上传的文件"""
     upload_folder = current_app.config['UPLOAD_FOLDER']
+    api_base_url = current_app.config['API_BASE_URL']
     if not os.path.exists(upload_folder):
         os.makedirs(upload_folder)
 
@@ -29,7 +30,7 @@ def save_uploaded_file(file, prefix=''):
     file_path = os.path.join(upload_folder, filename)
     file.save(file_path)
 
-    return f'/uploads/{filename}'
+    return f'{api_base_url}/uploads/{filename}'
 
 
 def validate_upload_request():

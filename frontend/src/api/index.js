@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000
 })
 
@@ -90,6 +90,14 @@ export const pagesAPI = {
   createPage: (data) => api.post('/pages', data),
   updatePage: (id, data) => api.put(`/pages/${id}`, data),
   deletePage: (id) => api.delete(`/pages/${id}`)
+}
+
+export const uploadsBaseUrl = import.meta.env.VITE_UPLOADS_BASE_URL
+
+export const resolveUploadUrl = (url) => {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  return `${uploadsBaseUrl}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
 export default api

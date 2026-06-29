@@ -5,7 +5,7 @@
       <aside class="sidebar-left">
         <el-card class="profile-card">
           <div class="profile-header">
-            <el-avatar :size="100" :src="configStore.getConfig('avatar') || undefined">
+            <el-avatar :size="100" :src="resolveUploadUrl(configStore.getConfig('avatar')) || undefined">
               <el-icon :size="50"><User /></el-icon>
             </el-avatar>
             <h2 class="profile-name">{{ configStore.getConfig('author_name', '博主') }}</h2>
@@ -168,7 +168,7 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useConfigStore } from '@/stores/config'
-import { postsAPI, messagesAPI } from '@/api'
+import { postsAPI, messagesAPI, resolveUploadUrl } from '@/api'
 
 const router = useRouter()
 const route = useRoute()
