@@ -100,6 +100,7 @@ export const resolveUploadUrl = (url) => {
     return url.replace(/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, '')
   }
   if (url.startsWith('http://') || url.startsWith('https://')) return url
+  if (url.startsWith('/uploads/')) return url
   return `${uploadsBaseUrl}${url.startsWith('/') ? '' : '/'}${url}`
 }
 

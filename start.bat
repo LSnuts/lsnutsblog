@@ -16,19 +16,19 @@ echo.
 
 echo [1/3] Starting backend service...
 set BACKEND_DIR=%~dp0backend
-start "Blog-Backend" cmd /k "cd /d %BACKEND_DIR% && %PYTHON_EXE% run.py"
+start "Blog-Backend" cmd /k "title Blog-Backend && cd /d %BACKEND_DIR% && %PYTHON_EXE% run.py"
 timeout /t 3 /nobreak >nul
 
 echo [2/3] Starting frontend service...
 set FRONTEND_DIR=%~dp0frontend
-start "Blog-Frontend" cmd /k "cd /d %FRONTEND_DIR% && npm run dev"
+start "Blog-Frontend" cmd /k "title Blog-Frontend && cd /d %FRONTEND_DIR% && npm run dev"
 timeout /t 3 /nobreak >nul
 
 echo [3/3] Starting Cloudflare Tunnel...
 set CLOUDFLARED_EXE=cloudflared.exe
 if exist "C:\Users\ASUS\Downloads\cloudflared.exe" set CLOUDFLARED_EXE=C:\Users\ASUS\Downloads\cloudflared.exe
 if exist "C:\cloudflared\cloudflared.exe" set CLOUDFLARED_EXE=C:\cloudflared\cloudflared.exe
-start "Cloudflare-Tunnel" cmd /k "%CLOUDFLARED_EXE% tunnel run lsblog-tunnel"
+start "Cloudflare-Tunnel" cmd /k "title Cloudflare-Tunnel && %CLOUDFLARED_EXE% tunnel run lsblog-tunnel"
 
 echo.
 echo ================================
